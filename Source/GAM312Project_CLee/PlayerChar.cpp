@@ -27,6 +27,10 @@ void APlayerChar::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Establish F Timer Handle
+	FTimerHandle StatsTimerHandle;
+	//Timer will tick every 2 seconds
+	GetWorld()->GetTimerManager().SetTimer(StatsTimerHandle, this, &APlayerChar::DecreaseStats, 2.0f, true);
 }
 
 // Called every frame
@@ -51,6 +55,7 @@ void APlayerChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
+//Defined functions for player movement
 void APlayerChar::MoveForward(float axisValue)
 {
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
@@ -76,5 +81,50 @@ void APlayerChar::StopJump()
 void APlayerChar::FindObject()
 {
 
+}
+
+
+//Functions to adjust health, hunger, and stamina variables
+void APlayerChar::SetHealth(float amount)
+{
+	if (Health + amount < 100)
+	{
+		Health = Health + amount;
+	}
+}
+
+void APlayerChar::SetHunger(float amount)
+{
+	if (Hunger + amount < 100)
+	{
+		Hunger = Hunger + amount;
+	}
+}
+
+void APlayerChar::SetStamina(float amount)
+{
+	if (Stamina + amount <= 100)
+	{
+		Stamina = Stamina + amount;
+	}
+}
+
+//Function to adjust variables when called
+void APlayerChar::DecreaseStats()
+{
+	//Decreases hunger by 1 every time function gets called if hunger is greater than 0
+	if (Hunger > 0)
+	{
+		SetHunger(-1.0f);
+	}
+
+	//Stamina regeneration
+	SetStamina(10.0f);
+
+	//Decreases health is hunger is at or below 0
+	if (Hunger <= 0)
+	{
+		SetHealth(-3.0f);
+	}
 }
 
