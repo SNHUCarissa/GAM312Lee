@@ -18,7 +18,12 @@ APlayerChar::APlayerChar()
 	//Shares rotation with controller
 	PlayerCamComp->bUsePawnControlRotation = true;
 
-
+	//Setting the number of elements in the array
+	ResourcesArray.SetNum(3);
+	//Setting each element in the name array
+	ResourcesNameArray.Add(TEXT("Wood"));
+	ResourcesNameArray.Add(TEXT("Stone"));
+	ResourcesNameArray.Add(TEXT("Berry"));
 
 }
 
@@ -53,6 +58,7 @@ void APlayerChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("JumpEvent", IE_Pressed, this, &APlayerChar::StartJump);
 	PlayerInputComponent->BindAction("JumpEvent", IE_Released, this, &APlayerChar::StopJump);
 
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerChar::FindObject);
 }
 
 //Defined functions for player movement
@@ -80,7 +86,57 @@ void APlayerChar::StopJump()
 
 void APlayerChar::FindObject()
 {
+	//Location of camera + direction camera is facing(800 units ahead of camera)
+	FHitResult HitResult;
+	FVector StartLocation = PlayerCamComp->GetComponentLocation();
+	FVector Direction = PlayerCamComp->GetForwardVector() * 800.0f;
+	FVector EndLocation = StartLocation + Direction;
 
+	FCollisionQueryParams QueryParams;
+	//Line trace ignores player character
+	QueryParams.AddIgnoredActor(this);
+	//Allows us to see complex collisions
+	QueryParams.bTraceComplex = true;
+	QueryParams.bReturnFaceIndex = true;
+
+	//Line trace
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams))
+	{
+		AResource_M* HitResource = Cast<AResource_M>(HitResult.GetActor());
+
+		if (Stamina > 5.0f)
+		{
+			//Validation to see if HitResource matches AResource_M
+			if (HitResource)
+			{
+				FString hitName = HitResource->resourceName;
+				int resourceValue = HitResource->resourceAmount;
+
+				HitResource->totalResource = HitResource->totalResource - resourceValue;
+
+				if (HitResource->totalResource > resourceValue)
+				{
+					GiveResource(resourceValue, hitName);
+
+					//Print message to show that resource is collected
+					check(GEngine != nullptr);
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Resource Collected"));
+
+					UGameplayStatics::SpawnDecalAtLocation(GetWorld(), hitDecal, FVector(10.0f, 10.0f, 10.0f), HitResult.Location, FRotator(-90, 0, 0), 2.0f);
+
+					SetStamina(-5.0f);
+				}
+				else
+				{
+					//Destroy hit result is there is no more resources left
+					HitResource->Destroy();
+					//Print message to show that resource is depleted
+					check(GEngine != nullptr);
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Resource Depleted"));
+				}
+			}
+		}
+	}
 }
 
 
@@ -125,6 +181,25 @@ void APlayerChar::DecreaseStats()
 	if (Hunger <= 0)
 	{
 		SetHealth(-3.0f);
+	}
+}
+
+//Determines which resource the player is hitting and adding the amount to the array in their respective index
+void APlayerChar::GiveResource(float amount, FString resourceType)
+{
+	if (resourceType == "Wood")
+	{
+		ResourcesArray[0] = ResourcesArray[0] + amount;
+	}
+
+	if (resourceType == "Stone")
+	{
+		ResourcesArray[1] = ResourcesArray[1] + amount;
+	}
+
+	if (resourceType == "Berry")
+	{
+		ResourcesArray[2] = ResourcesArray[2] + amount;
 	}
 }
 

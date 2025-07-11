@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Resource_M.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerChar.generated.h"
 
 UCLASS()
@@ -59,6 +61,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats")
 		float Stamina = 100.0f;
 
+	//Setting up properties for resources
+	UPROPERTY(EditAnywhere, Category = "Resources")
+		int Wood;
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
+		int Stone;
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
+		int Berry;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Resources")
+		TArray<int> ResourcesArray;
+
+	UPROPERTY(EditAnywhere, Category = "Resources")
+		TArray<FString> ResourcesNameArray;
+
+	UPROPERTY(EditAnywhere, Category = "HitMarker")
+		UMaterialInterface* hitDecal;
+
 	//Custom events that are blueprint callable functions that will allow the user to set player stats and decrease them over
 	//time depending on each stat
 	UFUNCTION(BlueprintCallable)
@@ -72,5 +93,8 @@ public:
 
 	UFUNCTION()
 		void DecreaseStats();
+
+	UFUNCTION()
+		void GiveResource(float amount, FString resourceType);
 
 };
