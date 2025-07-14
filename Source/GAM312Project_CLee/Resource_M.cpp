@@ -12,6 +12,7 @@ AResource_M::AResource_M()
 	ResourceNameTxt = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text Render"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
+	//Setting up mesh as root component
 	RootComponent = Mesh;
 
 	//Attaching TextRenderComponent to the Mesh
