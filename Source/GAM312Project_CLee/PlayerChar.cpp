@@ -202,7 +202,7 @@ void APlayerChar::DecreaseStats()
 	//Stamina regeneration
 	SetStamina(10.0f);
 
-	//Decreases health is hunger is at or below 0
+	//Decreases health if hunger is at or below 0
 	if (Hunger <= 0)
 	{
 		SetHealth(-3.0f);
