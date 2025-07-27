@@ -8,6 +8,7 @@
 #include "Resource_M.h"
 #include "Kismet/GameplayStatics.h"
 #include "BuildingPart.h"
+#include "PlayerWidget.h"
 #include "PlayerChar.generated.h"
 
 UCLASS()
@@ -96,6 +97,10 @@ public:
 	//individual class to set a variable to the spawned blueprint
 	UPROPERTY()
 		ABuildingPart* spawnedPart;
+
+	//referencing the function created in PlayerWidget
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPlayerWidget* playerUI;
 
 	//Custom events that are blueprint callable functions that will allow the user to set player stats and decrease them over
 	//time depending on each stat

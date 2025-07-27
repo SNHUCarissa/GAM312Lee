@@ -45,6 +45,9 @@ void APlayerChar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//every tick, these bars will update based on what the variables are currently at
+	playerUI->UpdateBars(Health, Hunger, Stamina);
+
 	//if building is active and spawned part is a valid object, line trace will be set up to allow us to place object
 	//Object will follow wherever we're pointing at until we click again
 	if (isBuilding)
