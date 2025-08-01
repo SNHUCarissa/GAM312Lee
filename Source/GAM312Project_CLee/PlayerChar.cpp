@@ -38,6 +38,14 @@ void APlayerChar::BeginPlay()
 	FTimerHandle StatsTimerHandle;
 	//Timer will tick every 2 seconds
 	GetWorld()->GetTimerManager().SetTimer(StatsTimerHandle, this, &APlayerChar::DecreaseStats, 2.0f, true);
+
+	//if objWidget is valid, set the initial values for the two functions that was created in ObjectiveWidget
+	//Once we start playing the game, the initial value will be set to 0 until we add things to it
+	if (objWidget)
+	{
+		objWidget->UpdatebuildObj(0.0f);
+		objWidget->UpdatematObj(0.0f);
+	}
 }
 
 // Called every frame
@@ -140,6 +148,12 @@ void APlayerChar::FindObject()
 					{
 						GiveResource(resourceValue, hitName);
 
+						//this allows the player to keep track of how many materials they have collected towards the objective
+						matsCollected = matsCollected + resourceValue;
+
+						//calling UpdatematObj function to pass the matsCollected variable
+						objWidget->UpdatematObj(matsCollected);
+
 						//Print message to show that resource is collected
 						check(GEngine != nullptr);
 						GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Resource Collected"));
@@ -163,7 +177,13 @@ void APlayerChar::FindObject()
 
 	else
 	{
+		//if isBuilding is false, that means player left clicked to place a building object
 		isBuilding = false;
+		//adds 1 if player has built an object
+		objectsBuilt = objectsBuilt + 1.0f;
+
+		//function is called to pass variable
+		objWidget->UpdatebuildObj(objectsBuilt);
 	}
 }
 
