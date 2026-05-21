@@ -11,12 +11,15 @@ AResource_M::AResource_M()
 
 	ResourceNameTxt = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text Render"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh2"));
 
 	//Setting up mesh as root component
 	RootComponent = Mesh;
 
+	Mesh2->SetupAttachment(Mesh);
+
 	//Attaching TextRenderComponent to the Mesh
-	ResourceNameTxt->SetupAttachment(Mesh);
+	ResourceNameTxt->SetupAttachment(Mesh2);
 }
 
 // Called when the game starts or when spawned
