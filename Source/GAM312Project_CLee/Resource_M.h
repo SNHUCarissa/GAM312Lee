@@ -47,4 +47,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* Mesh2;
+
 };
